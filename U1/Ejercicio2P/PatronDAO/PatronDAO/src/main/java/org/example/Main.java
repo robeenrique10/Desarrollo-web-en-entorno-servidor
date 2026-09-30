@@ -20,10 +20,25 @@ public class Main {
             System.out.println(libro);
         }
 
-        try {
-            libros.obtenerPorId(5);
-        } catch (LibroNoEncontradoException exception) {
-            System.out.println("Búsqueda: " + exception.getMessage());
+        System.out.println("Libro co ID 1 ...");
+        System.out.println(libros.obtenerPorId(1));
+
+        System.out.println("Actualizando libro con ID 1 ...");
+        libros.actualizar(new Libro(1, "Cien años de soledad", "Gabriel García Márquez", 1969));
+        System.out.println("Libro actualizado con éxito");
+
+        System.out.println("Todos los libros después de actualizar:");
+        for (Libro libro : libros.obtenerTodos()) {
+            System.out.println(libro);
+        }
+
+        System.out.println("Eliminando libro con ID 2 ...");
+        libros.eliminar(2);
+        System.out.println("Libro eliminado con éxito.");
+
+        System.out.println("Todos los libros después de eliminar:");
+        for (Libro libro : libros.obtenerTodos()) {
+            System.out.println(libro);
         }
 
     }

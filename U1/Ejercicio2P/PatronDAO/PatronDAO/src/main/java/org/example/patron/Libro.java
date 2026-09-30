@@ -32,10 +32,6 @@ public class Libro {
 
     @Override
     public String toString() {
-        return "Libro con " +
-                "id:" + id +
-                ", titulo='" + titulo + '\'' +
-                ", autor='" + autor + '\'' +
-                ", anioPublicacion=" + anioPublicacion;
+        return id + " - " + titulo + " por " + autor + ", " + anioPublicacion;
     }
 }
