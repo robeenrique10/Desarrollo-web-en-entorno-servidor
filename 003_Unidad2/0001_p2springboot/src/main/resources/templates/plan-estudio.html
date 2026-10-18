@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <!--Bienvenida/Saludo al estudiante-->
+        <h1 th:text="'¡Hola, ' + ${nombreEstudiante} + '!'">¡Hola Estudiante!</h1>
+
+        <!--Título del plan de estudio-->
+        <h2>Plan de Estudio Diario</h2>
+
+        <p th:text="'Tienes un total de ' + ${#lists.size(asignaturas)} + ' asignaturas para hoy:'">Total de asignaturas</p>
+
+        <ul>
+            <li th:each="asig, iterStat : ${asignaturas}"
+                th:text="${iterStat.count} + '. ' + ${asig} + ' - ' + ${#numbers.formatDecimal(duraciones[iterStat.index], 1, 'COMMA', 0, 'POINT')} + ' minutos'">
+                1. Asignatura - 0 minutos
+            </li>
+        </ul>
+    </body>
+</html>
