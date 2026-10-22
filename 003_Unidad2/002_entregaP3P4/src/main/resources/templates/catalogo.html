@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Catálogo</title>
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+
+        <header>
+            <h1>Catálogo de recursos</h1>
+        </header>
+
+        <main>
+            <p>Selecciona el material que desee para consultar su ficha detallada o iniciar una solicitud.</p>
+
+            <div class="actions">
+                <a th:href="@{/solicitud/nueva}" class="btn">Nueva Solicitud de Préstamo</a>
+            </div>
+
+            <section class="grid-catalogo">
+                <div th:each="material : ${catalogo}" class="card">
+                    <h3 th:text="${material[1]}">Nombre</h3>
+                    <p><strong>Código:</strong> <span th:text="${material[0]}">COD</span></p>
+                    <p th:text="${material[2]}">Descripción</p>
+                    <a th:href="@{/materiales/{codigo}(codigo=${material[0]})}" class="btn-secondary">Ver Ficha</a>
+                </div>
+            </section>
+
+        </main>
+
+    </body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen de Solicitud</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header>
+    <h1>Solicitud Registrada con Éxito</h1>
+</header>
+
+<main>
+    <p>A continuación se muestra el resumen detallado del préstamo solicitado en Aula Maker:</p>
+
+    <!-- Caja de información general del resultado -->
+    <div class="info-box" style="margin-top: 20px;">
+        <!-- th:text="${solicitud.nombre}" extrae la propiedad nombre del objeto DTO guardado en el modelo -->
+        <p><strong>Solicitante:</strong> <span th:text="${solicitud.nombre}">Nombre</span></p>
+
+        <!-- th:text="${solicitud.correo}" muestra el correo electrónico vinculado -->
+        <p><strong>Correo electrónico:</strong> <span th:text="${solicitud.correo}">Correo</span></p>
+
+        <!-- material[1] muestra el nombre del material recuperado del array
+        material[0] muestra el código identificador del material-->
+        <p><strong>Material:</strong> <span th:text="${material[1]}">Material</span> (Código: <span th:text="${material[0]}">COD</span>)</p>
+
+        <!-- th:text muestra las fechas procesadas y validadas -->
+        <p><strong>Fecha de recogida:</strong> <span th:text="${solicitud.fechaRecogida}">Fecha</span></p>
+        <p><strong>Fecha de devolución:</strong> <span th:text="${solicitud.fechaDevolucion}">Fecha</span></p>
+
+        <!-- th:text muestra las unidades solicitadas -->
+        <p><strong>Unidades solicitadas:</strong> <span th:text="${solicitud.unidades}">1</span></p>
+
+        <!-- th:text muestra el motivo introducido en el formulario -->
+        <p><strong>Motivo del préstamo:</strong> <span th:text="${solicitud.motivo}">Motivo</span></p>
+
+        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ddd;">
+
+        <!-- th:text muestra los valores calculados por el método de conteo de días de préstamo por dispositivo prestado -->
+        <p><strong>Duración del préstamo:</strong> <span th:text="${diasPrestamo}">0</span> día(s)</p>
+        <p><strong>Días-Unidad:</strong> <span th:text="${diasUnidad}">0</span></p>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="actions" style="margin-top: 25px;">
+        <!-- th:href="@{/}" genera el enlace dinámico para regresar a la página principal / raíz -->
+        <a th:href="@{/}" class="btn">Volver al Catálogo</a>
+    </div>
+</main>
+
+</body>
+</html>

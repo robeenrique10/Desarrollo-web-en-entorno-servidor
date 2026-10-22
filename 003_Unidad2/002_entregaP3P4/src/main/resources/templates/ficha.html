@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ficha de Material</title>
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+
+        <header>
+            <!--Con ${material[1]}, sacamos el campo del nombre de material de dentro del Array que hemos hecho par meter los materiales que tiene -->
+            <h1 th:text="${material[1]}">Nombre del Material</h1>
+        </header>
+
+        <main>
+            <p>Detalles e información del material seleccionado:</p>
+
+            <div class="info-box" style="margin-top: 20px;">
+                <p>
+                    <strong>Código de material:</strong>
+                    <!--En ${material[0]}, sacaremos el código del material en concreto-->
+                    <span th:text="${material[0]}">COD</span>
+                </p>
+                <p>
+                    <strong>Descripción del material:</strong>
+                    <!--Con ${material[2]}, sacaremos el tercer campo del array que es la descripción del material-->
+                    <span th:text="${material[2]}">Descripción</span>
+                </p>
+            </div>
+
+            <div class="actions" style="display: flex; gap: 10px; align-items: center; margin-top: 25px;">
+                <!--Este hipervínculo nos redirigirá a la página de la solicitud-->
+                <a th:href="@{/solicitud/nueva}" class="btn">Solicitar Préstamo</a>
+                <!--Este hipervínculo nos redirigirá a la página del catálogo-->
+                <a th:href="@{/}" class="btn-secondary">Volver al Catálogo</a>
+            </div>
+
+        </main>
+
+    </body>
+</html>

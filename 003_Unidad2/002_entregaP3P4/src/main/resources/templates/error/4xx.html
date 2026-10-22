@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error en la Petición</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header>
+    <h1>Recurso no encontrado (4xx)</h1>
+</header>
+
+<main>
+    <p>Lo sentimos, la página o el material que estás buscando no existe o la ruta es incorrecta.</p>
+
+    <!-- Botón de retorno de emergencia -->
+    <div class="actions" style="margin-top: 25px;">
+        <!-- th:href="@{/}" redirige al usuario de vuelta al catálogo raíz de manera segura -->
+        <a th:href="@{/}" class="btn">Volver al Catálogo Principal</a>
+    </div>
+</main>
+
+</body>
+</html>

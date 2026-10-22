@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página No Encontrada</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header>
+    <h1>Error 404 - Página no encontrada</h1>
+</header>
+
+<main>
+    <p>Vaya, la página, la ruta o el recurso que estás intentando buscar no existe en el sistema de Aula Maker.</p>
+
+    <!-- Botones de acción para redirigir al usuario -->
+    <div class="actions" style="margin-top: 25px;">
+        <!-- th:href="@{/}" genera el enlace dinámico para volver al catálogo principal / raíz -->
+        <a th:href="@{/}" class="btn">Volver al Catálogo Principal</a>
+    </div>
+</main>
+
+</body>
+</html>

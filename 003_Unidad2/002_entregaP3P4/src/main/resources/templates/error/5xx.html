@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error del Servidor</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header>
+    <h1>Error interno del servidor (5xx)</h1>
+</header>
+
+<main>
+    <p>Vaya, ha ocurrido un error inesperado al procesar tu solicitud en el sistema de Aula Maker.</p>
+
+    <!-- Botón de retorno de emergencia -->
+    <div class="actions" style="margin-top: 25px;">
+        <!-- th:href="@{/}" permite volver al inicio de la aplicación de forma segura si ocurre un fallo -->
+        <a th:href="@{/}" class="btn">Volver al Catálogo Principal</a>
+    </div>
+</main>
+
+</body>
+</html>

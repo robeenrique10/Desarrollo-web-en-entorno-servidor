@@ -14,6 +14,7 @@
         <p th:text="'Tienes un total de ' + ${#lists.size(asignaturas)} + ' asignaturas para hoy:'">Total de asignaturas</p>
 
         <ul>
+            <!--El th:each funciona como un for each, en este caso lo que haremos será crear el for each donde después deberemos crear las etiquetas span(recomendado)-->
             <li th:each="asig, iterStat : ${asignaturas}"
                 th:text="${iterStat.count} + '. ' + ${asig} + ' - ' + ${#numbers.formatDecimal(duraciones[iterStat.index], 1, 'COMMA', 0, 'POINT')} + ' minutos'">
                 1. Asignatura - 0 minutos
