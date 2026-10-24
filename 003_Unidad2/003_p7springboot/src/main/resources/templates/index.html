@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+    <html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Inicio - Centro Cultural</title>
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+
+        <!-- Cabecera -->
+        <header th:replace="~{fragments/comun :: cabecera(#{inicio.titulo}, #{inicio.descripcion})}">Cabecera</header>
+
+        <!-- Navegación -->
+        <nav th:replace="~{fragments/comun :: navegacion('inicio')}">Navegación</nav>
+
+        <!-- Contenido Principal -->
+        <main class="main-content">
+            <section class="activities-container">
+                <h2 class="section-title" th:text="#{inicio.seccion.titulo}">Listado de Actividades</h2>
+
+                <div class="activities-grid">
+                    <th:block th:each="actividad : ${actividades}">
+                        <div th:replace="~{fragments/comun :: tarjetaActividad(${actividad})}">
+                            Tarjeta de actividad
+                        </div>
+                    </th:block>
+                </div>
+            </section>
+        </main>
+
+        <!-- Pie de página -->
+        <footer th:replace="~{fragments/comun :: pie}">Footer</footer>
+
+    </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Visita - Centro Cultural</title>
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+
+        <!-- Cabecera -->
+        <header th:replace="~{fragments/comun :: cabecera(#{visita.titulo}, #{visita.descripcion})}">Cabecera</header>
+
+        <!-- Navegación -->
+        <nav th:replace="~{fragments/comun :: navegacion('visita')}">Navegación</nav>
+
+        <!-- Contenido Principal de la Visita -->
+        <main class="main-content">
+            <section class="visit-container">
+                <h2 class="section-title" th:text="#{visita.seccion.titulo}">Información Práctica para tu Visita</h2>
+
+                <div class="visit-grid">
+                    <!-- Tarjeta de Horarios -->
+                    <div class="visit-card">
+                        <h3 class="visit-card-title" th:text="#{visita.horarios.titulo}">Horarios de Apertura</h3>
+                        <p class="visit-card-text" th:text="#{visita.horarios.texto}">De martes a sábado: 10:00 - 14:00 y 17:00 - 20:30. Domingos y festivos: 10:00 - 14:00. Lunes cerrado.</p>
+                    </div>
+
+                    <!-- Tarjeta de Cómo llegar -->
+                    <div class="visit-card">
+                        <h3 class="visit-card-title" th:text="#{visita.lugar.titulo}">Cómo Llegar</h3>
+                        <p class="visit-card-text" th:text="#{visita.lugar.texto}">Calle Mayor, 24 (Junto a la Plaza Central). Autobuses: Líneas 3, 5 y 12. Metro: Estación Central (Línea 1).</p>
+                    </div>
+
+                    <!-- Tarjeta de Normas -->
+                    <div class="visit-card">
+                        <h3 class="visit-card-title" th:text="#{visita.normas.titulo}">Normas de Acceso</h3>
+                        <p class="visit-card-text" th:text="#{visita.normas.texto}">La entrada a las exposiciones permanentes es libre hasta completar aforo. Se ruega mantener silencio y desconectar el flash de las cámaras.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Pie de página -->
+        <footer th:replace="~{fragments/comun :: pie}">Footer</footer>
+
+    </body>
+</html>

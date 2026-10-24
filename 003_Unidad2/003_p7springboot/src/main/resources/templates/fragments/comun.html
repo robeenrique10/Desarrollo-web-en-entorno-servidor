@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Fragmentos Comunes</title>
+    </head>
+    <body>
+
+        <!-- Fragmento de Cabecera -->
+        <header th:fragment="cabecera(titulo, descripcion)" class="site-header">
+            <h1 class="header-title" th:text="${titulo}">Título por defecto</h1>
+            <p class="header-desc" th:text="${descripcion}">Descripción por defecto</p>
+        </header>
+
+        <!-- Fragmento de Navegación -->
+        <nav th:fragment="navegacion(paginaActiva)" class="main-nav">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a th:href="@{/}" th:class="${paginaActiva == 'inicio'} ? 'nav-link active' : 'nav-link'" th:text="#{nav.inicio}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/visita}" th:class="${paginaActiva == 'visita'} ? 'nav-link active' : 'nav-link'" th:text="#{nav.visita}">Visita</a>
+                </li>
+            </ul>
+            <div class="language-selector">
+                <span th:text="#{language.label}">Idioma:</span>
+                <a th:href="@{/(lang=es)}" class="lang-link">ES</a> |
+                <a th:href="@{/(lang=en)}" class="lang-link">EN</a>
+            </div>
+        </nav>
+
+        <!-- Fragmento de Tarjeta de Actividad -->
+        <div th:fragment="tarjetaActividad(actividad)" class="activity-card">
+            <h3 class="activity-title" th:text="${actividad.titulo}">Título</h3>
+            <p class="activity-desc" th:text="${actividad.descripcion}">Descripción</p>
+            <div class="activity-meta">
+                <span class="activity-date" th:text="${actividad.fecha}">Fecha</span>
+                <span class="activity-duration" th:text="${actividad.duracion}">Duración</span>
+                <span class="activity-location" th:text="${actividad.lugar}">Lugar</span>
+            </div>
+        </div>
+
+        <!-- Fragmento de Pie de Página -->
+        <footer th:fragment="pie" class="site-footer">
+            <p>&copy; 2026 José Enrique Rodríguez Benítez</p>
+        </footer>
+
+    </body>
+</html>
