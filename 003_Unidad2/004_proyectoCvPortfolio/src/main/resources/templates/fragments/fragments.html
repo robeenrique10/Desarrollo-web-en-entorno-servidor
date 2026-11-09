@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+    <head>
+        <meta charset="UTF-8">
+        <title>Fragmentos comunes</title>
+    </head>
+    <body>
+
+    <!-- Cabecera -->
+    <!-- Definición de un fragmento reutilizable con un parámetro 'paginaActiva' -->
+    <header th:fragment="header(paginaActiva)" class="header">
+        <div class="logo">
+            <!-- Enlace con URL relativa mediante @ para ir a la página principal -->
+            <a th:href="@{/}">
+                <!-- Imagen con ruta estática relativa y texto alternativo mediante clave i18n -->
+                <img th:src="@{/images/LogoBlancoSinFondo.png}" th:alt="#{header.logo.alt}" alt="Logotipo">
+            </a>
+        </div>
+        <nav class="navbar">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <!-- Enlace a la ruta /curriculum; evalúa si la página activa es 'curriculum' para aplicar la clase CSS 'active' -->
+                    <a th:href="@{/curriculum}"
+                       th:class="${paginaActiva == 'curriculum'} ? 'nav-link active' : 'nav-link'"
+                       th:text="#{nav.curriculum}">CURRÍCULUM</a>
+                </li>
+                <li class="nav-item">
+                    <!-- Enlace a la ruta /portfolio; evalúa si la página activa es 'portfolio' para aplicar la clase CSS 'active' -->
+                    <a th:href="@{/portfolio}"
+                       th:class="${paginaActiva == 'portfolio'} ? 'nav-link active' : 'nav-link'"
+                       th:text="#{nav.portfolio}">PORTFOLIO</a>
+                </li>
+                <li class="nav-item">
+                    <!-- Enlace a la ruta /portfolio/editar; evalúa si la página activa es 'editar' para aplicar la clase CSS 'active' -->
+                    <a th:href="@{/portfolio/editar}"
+                       th:class="${paginaActiva == 'editar'} ? 'nav-link active' : 'nav-link'"
+                       th:text="#{nav.editar}">CREAR</a>
+                </li>
+            </ul>
+        </nav>
+        <!-- Selector de idioma que calcula dinámicamente la ruta actual base según la página activa para conservar el contexto -->
+        <div class="language-selector"
+             th:with="ruta=${paginaActiva == 'portfolio' ? '/portfolio' : (paginaActiva == 'editar' ? '/portfolio/editar' : '/curriculum')}">
+            <!-- Acceso a clave i18n -->
+            <span th:text="#{language.label}">Idioma:</span>
+            <!-- Enlace para cambiar a español (es), marcando clase 'active' si el idioma actual es español -->
+            <a th:href="@{${ruta}(lang=es)}" th:class="${#locale.language == 'es'} ? 'lang-link active' : 'lang-link'">ES</a> |
+            <!-- Enlace para cambiar a inglés (en), marcando clase 'active' si el idioma actual es inglés -->
+            <a th:href="@{${ruta}(lang=en)}" th:class="${#locale.language == 'en'} ? 'lang-link active' : 'lang-link'">EN</a>
+        </div>
+    </header>
+
+    <!-- Tarjeta de proyecto: titulo y descripcion guardan CLAVES, por eso #{${...}} -->
+    <!-- Definición de un fragmento reutilizable 'tarjetaProyecto' que recibe un objeto 'proyecto' -->
+    <article th:fragment="tarjetaProyecto(proyecto)" class="project-card">
+
+        <!-- Condicional que comprueba que la imagen no esté vacía para mostrarla dinámicamente -->
+        <img th:if="${!#strings.isEmpty(proyecto.imagen)}"
+             class="project-image"
+             th:src="@{${proyecto.imagen}}"
+             th:alt="#{portfolio.imagen.alt(#{${proyecto.titulo}})}">
+
+        <div class="project-body">
+            <div class="project-header">
+                <!-- Acceso a clave i18n dinámica combinando el atributo titulo del proyecto -->
+                <h3 class="project-title" th:text="#{${proyecto.titulo}}">Título</h3>
+
+                <!-- Switch que evalúa el estado del proyecto para mostrar una etiqueta coloreada con su texto i18n correspondiente -->
+                <span th:switch="${proyecto.estado}">
+                        <span th:case="'En curso'" class="etiqueta-estado estado-en-curso"
+                              th:text="#{estado.encurso}">En curso</span>
+                        <span th:case="'Terminado'" class="etiqueta-estado estado-terminado"
+                              th:text="#{estado.terminado}">Terminado</span>
+                    </span>
+            </div>
+
+            <p class="project-meta">
+                <!-- Acceso a clave i18n compuesta concatenando el prefijo 'categoria.' con el valor de la categoría -->
+                <span class="project-category" th:text="#{'categoria.' + ${proyecto.categoria}}">Categoría</span>
+                <span aria-hidden="true">·</span>
+                <!-- Acceso directo al atributo anio del proyecto -->
+                <span class="project-year" th:text="${proyecto.anio}">2026</span>
+            </p>
+
+            <!-- Acceso a clave i18n dinámica a través de la descripción guardada como clave en el objeto -->
+            <p class="project-description" th:text="#{${proyecto.descripcion}}">Descripción</p>
+
+            <!-- Condicional que comprueba si la lista de tecnologías no está vacía antes de renderizar la sección -->
+            <div class="project-tech" th:unless="${#lists.isEmpty(proyecto.tecnologias)}">
+                <!-- Acceso a clave i18n -->
+                <h4 class="project-tech-title" th:text="#{portfolio.tecnologias}">Tecnologías</h4>
+                <ul class="tag-list">
+                    <!-- Bucle para recorrer la lista de tecnologías del proyecto -->
+                    <li class="tag" th:each="tecnologia : ${proyecto.tecnologias}" th:text="${tecnologia}">Java</li>
+                </ul>
+            </div>
+
+            <div class="project-acciones">
+                <!-- Enlace con URL relativa parametrizada para ver los detalles de un proyecto específico según su ID -->
+                <a class="project-link" th:href="@{/portfolio/proyecto/{id}(id=${proyecto.id})}"
+                   th:text="#{portfolio.detalle}">Ver detalle</a>
+                <!-- Condicional y enlace externo para ver el proyecto en vivo si el campo enlace no está vacío -->
+                <a th:if="${!#strings.isEmpty(proyecto.enlace)}" class="project-link"
+                   th:href="${proyecto.enlace}" target="_blank" rel="noopener noreferrer"
+                   th:text="#{portfolio.verproyecto}">Ver proyecto</a>
+            </div>
+        </div>
+    </article>
+
+    <!-- Footer -->
+    <!-- Definición del fragmento reutilizable 'footer' -->
+    <footer th:fragment="footer" class="footer">
+        <div class="copy">
+            <!-- Acceso a clave i18n para el texto de copyright -->
+            <p th:text="#{footer.copy}">Diseñado y construido por José Enrique Rodríguez Benítez © 2026</p>
+        </div>
+        <div class="btn-redes">
+            <!-- Enlace externo a GitHub con etiqueta accesible mediante i18n -->
+            <a href="https://github.com/robeenrique10" target="_blank" rel="noopener noreferrer"
+               th:aria-label="#{footer.github}" aria-label="GitHub">
+                <i class="fa-brands fa-github"></i>
+            </a>
+            <!-- Enlace externo a LinkedIn con etiqueta accesible mediante i18n -->
+            <a href="https://www.linkedin.com/in/josé-enrique-rodríguez-benítez-578296449/" target="_blank" rel="noopener noreferrer"
+               th:aria-label="#{footer.linkedin}" aria-label="LinkedIn">
+                <i class="fa-brands fa-linkedin"></i>
+            </a>
+        </div>
+    </footer>
+
+    </body>
+</html>

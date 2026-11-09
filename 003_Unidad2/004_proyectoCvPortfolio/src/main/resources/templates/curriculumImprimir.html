@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Acceso a clave i18n -->
+        <title th:text="#{curriculum.titulo}">Currículum</title>
+        <!-- Acceso a un recurso estático mediante URL relativa con @ -->
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body class="imp-pagina">
+
+    <!-- Solo en pantalla: se oculta al imprimir -->
+    <div class="imp-barra">
+        <!-- Acceso a clave i18n -->
+        <p th:text="#{cv.imprimir.ayuda}">Pulsa Ctrl+P para imprimir o guardar como PDF</p>
+        <!-- Acceso a un GetMapping con @ para volver a la página principal del currículum -->
+        <a class="btn-secundario" th:href="@{/curriculum}" th:text="#{imprimir.volver}">Volver al currículum</a>
+    </div>
+
+    <main class="imp">
+        <header class="imp-cabecera">
+            <!-- Acceso a atributo del objeto miCurriculum -->
+            <h1 th:text="${miCurriculum.nombre}">Nombre</h1>
+            <!-- Acceso a clave i18n -->
+            <p class="imp-titular" th:text="#{cv.titularProfesional}">Profesión</p>
+            <!-- Condicional que comprueba que el contacto no esté vacío antes de mostrarlo -->
+            <p class="imp-contacto" th:if="${!#strings.isEmpty(miCurriculum.contacto)}" th:text="${miCurriculum.contacto}">correo</p>
+        </header>
+
+        <!-- Acceso a clave i18n -->
+        <p class="imp-texto" th:text="#{cv.presentacion}">Presentación</p>
+
+        <section class="imp-seccion">
+            <!-- Acceso a clave i18n -->
+            <h2 th:text="#{cv.formacion}">Formación</h2>
+            <ul class="imp-lista">
+                <!-- Bucle para recorrer todas las formaciones del objeto miCurriculum -->
+                <li th:each="f : ${miCurriculum.formaciones}">
+                    <!-- Acceso a clave i18n mediante el atributo nombre de la formación -->
+                    <strong th:text="#{${f.nombre}}">Estudio</strong> ·
+                    <!-- Acceso a clave i18n mediante el atributo centro de la formación -->
+                    <span th:text="#{${f.centro}}">Centro</span> ·
+                    <!-- Si el año de finalización es nulo, muestra texto indicando que está en curso mediante i18n -->
+                    <span th:if="${f.anioFinalizacion == null}" th:text="#{cv.encurso}">En curso</span>
+                    <!-- Si ya ha finalizado, muestra el año de finalización -->
+                    <span th:unless="${f.anioFinalizacion == null}" th:text="${f.anioFinalizacion}">2025</span>
+                </li>
+            </ul>
+        </section>
+
+        <section class="imp-seccion">
+            <!-- Acceso a clave i18n -->
+            <h2 th:text="#{cv.experiencia}">Experiencia</h2>
+            <!-- Condicional que muestra un mensaje mediante i18n si la lista de experiencias está vacía -->
+            <p th:if="${#lists.isEmpty(miCurriculum.experiencias)}" th:text="#{cv.sinexperiencia}">En busca de mi primera experiencia</p>
+            <ul class="imp-lista" th:unless="${#lists.isEmpty(miCurriculum.experiencias)}">
+                <!-- Bucle que recorre la lista de experiencias del currículum -->
+                <li th:each="e : ${miCurriculum.experiencias}">
+                    <!-- Acceso a clave i18n mediante el atributo puesto -->
+                    <strong th:text="#{${e.puesto}}">Puesto</strong> ·
+                    <!-- Acceso a clave i18n mediante el atributo organización -->
+                    <span th:text="#{${e.organizacion}}">Organización</span> ·
+                    <!-- Acceso a clave i18n mediante el atributo periodo -->
+                    <span th:text="#{${e.periodo}}">Periodo</span>
+                </li>
+            </ul>
+        </section>
+
+        <section class="imp-seccion">
+            <!-- Acceso a clave i18n -->
+            <h2 th:text="#{cv.habilidades}">Habilidades</h2>
+            <ul class="cv-lista-niveles">
+                <!-- Bucle para recorrer el array de habilidades -->
+                <li class="cv-par" th:each="h : ${miCurriculum.habilidades}">
+                    <!-- Acceso a clave i18n mediante el nombre de la habilidad -->
+                    <span class="cv-nombre-nivel" th:text="#{${h.nombre}}">Habilidad</span>
+                    <!-- Switch que evalúa el nivel de la habilidad para aplicar estilos y textos i18n específicos -->
+                    <span th:switch="${h.nivel}">
+                            <span th:case="'alto'" class="cv-nivel nivel-alto" th:text="#{nivel.alto}">nivel alto</span>
+                            <span th:case="'medio'" class="cv-nivel nivel-medio" th:text="#{nivel.medio}">nivel medio</span>
+                            <span th:case="'bajo'" class="cv-nivel nivel-bajo" th:text="#{nivel.bajo}">nivel bajo</span>
+                        </span>
+                </li>
+            </ul>
+        </section>
+
+        <section class="imp-seccion">
+            <!-- Acceso a clave i18n -->
+            <h2 th:text="#{cv.idiomas}">Idiomas</h2>
+            <ul class="cv-lista-niveles">
+                <!-- Bucle para recorrer el array de idiomas -->
+                <li class="cv-par" th:each="i : ${miCurriculum.idiomas}">
+                    <!-- Acceso a clave i18n mediante el nombre del idioma -->
+                    <span class="cv-nombre-nivel" th:text="#{${i.nombre}}">Idioma</span>
+                    <!-- Switch que evalúa el nivel del idioma para aplicar estilos y textos i18n específicos -->
+                    <span th:switch="${i.nivel}">
+                            <span th:case="'alto'" class="cv-nivel nivel-alto" th:text="#{nivel.alto}">nivel alto</span>
+                            <span th:case="'medio'" class="cv-nivel nivel-medio" th:text="#{nivel.medio}">nivel medio</span>
+                            <span th:case="'bajo'" class="cv-nivel nivel-bajo" th:text="#{nivel.bajo}">nivel bajo</span>
+                        </span>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    </body>
+</html>

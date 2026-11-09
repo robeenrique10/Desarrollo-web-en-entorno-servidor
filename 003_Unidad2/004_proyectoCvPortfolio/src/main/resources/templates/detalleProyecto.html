@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Acceso a clave i18n dinámica combinando una propiedad del objeto proyecto -->
+        <title th:text="#{${proyecto.titulo}}">Proyecto</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <!-- Acceso a un recurso estático mediante URL relativa con @ -->
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+
+    <!-- Header reemplazado con Thymeleaf por el cual veremos que podemos ver cúal es la página en la que nos encontramos-->
+    <header th:replace="~{fragments/fragments :: header('portfolio')}">Header</header>
+
+    <main class="detalle">
+        <!-- Acceso a un GetMapping con @ para volver a la ruta del portfolio -->
+        <a class="btn-secundario" th:href="@{/portfolio}">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            <!-- Acceso a clave i18n -->
+            <span th:text="#{detalle.volver}">Volver al portfolio</span>
+        </a>
+
+        <article class="detalle-card">
+            <!-- Condicional que comprueba que el campo imagen no esté vacío para mostrarla -->
+            <img th:if="${!#strings.isEmpty(proyecto.imagen)}" class="detalle-imagen"
+                 th:src="@{${proyecto.imagen}}"
+                 th:alt="#{portfolio.imagen.alt(#{${proyecto.titulo}})}">
+
+            <div class="detalle-body">
+                <div class="project-header">
+                    <!-- Acceso a clave i18n dinámica a través del atributo titulo del proyecto -->
+                    <h2 class="detalle-titulo" th:text="#{${proyecto.titulo}}">Título</h2>
+                    <!-- Switch que dependiendo del estado mostrará un texto y mediante las clases css coloreará la etiqueta de un color u otro -->
+                    <span th:switch="${proyecto.estado}">
+                            <!-- En el caso de estar en curso, mostrará el texto de la clave i18n -->
+                            <span th:case="'En curso'" class="etiqueta-estado estado-en-curso" th:text="#{estado.encurso}">En curso</span>
+                        <!-- En el caso de estar terminado, mostrará el texto de la clave i18n -->
+                            <span th:case="'Terminado'" class="etiqueta-estado estado-terminado" th:text="#{estado.terminado}">Terminado</span>
+                        </span>
+                </div>
+
+                <p class="project-meta">
+                    <!-- Acceso a clave i18n compuesta concatenando una cadena fija con el valor del atributo categoria -->
+                    <span th:text="#{'categoria.' + ${proyecto.categoria}}">Categoría</span>
+                    <span aria-hidden="true">·</span>
+                    <!-- Acceso a un atributo de tipo numérico del objeto proyecto -->
+                    <span th:text="${proyecto.anio}">2026</span>
+                </p>
+
+                <!-- Acceso a clave i18n dinámica a través del atributo descripcion del proyecto -->
+                <p class="detalle-descripcion" th:text="#{${proyecto.descripcion}}">Descripción</p>
+
+                <!-- Condicional que comprueba si la lista de tecnologías no está vacía antes de mostrar la sección -->
+                <div th:unless="${#lists.isEmpty(proyecto.tecnologias)}">
+                    <!-- Acceso a clave i18n -->
+                    <h3 class="project-tech-title" th:text="#{portfolio.tecnologias}">Tecnologías</h3>
+                    <ul class="tag-list">
+                        <!-- Bucle por el cual accederá a cada tecnología de la lista de tecnologías del proyecto -->
+                        <li class="tag" th:each="t : ${proyecto.tecnologias}" th:text="${t}">Java</li>
+                    </ul>
+                </div>
+
+                <!-- En el caso de que el enlace no esté vacío, se mostrará el botón/enlace para ver el proyecto externamente -->
+                <a th:if="${!#strings.isEmpty(proyecto.enlace)}" class="project-link"
+                   th:href="${proyecto.enlace}" target="_blank" rel="noopener noreferrer"
+                   th:text="#{portfolio.verproyecto}">Ver proyecto</a>
+            </div>
+        </article>
+    </main>
+
+    <!-- Header reemplazado con Thymeleaf -->
+    <footer th:replace="~{fragments/fragments :: footer}">Footer</footer>
+
+    </body>
+</html>

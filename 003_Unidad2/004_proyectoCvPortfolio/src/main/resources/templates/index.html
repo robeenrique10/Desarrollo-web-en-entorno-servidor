@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title th:text="#{curriculum.titulo}">Curriculum</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSh8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+
+    <!-- Header reemplazado con Thymeleaf por el cual veremos que podemos ver cúal es la página en la que nos encontramos-->
+    <header th:replace="~{fragments/fragments :: header('curriculum')}">Header</header>
+
+    <main class="cv">
+
+        <div class="imprimir-cv">
+            <!-- Acceso a clave i18n -->
+            <p class="imprimir-ayuda" th:text="#{cv.imprimir.ayuda}">Abre la versión para imprimir y pulsa Ctrl+P</p>
+            <!-- Acceso a un GetMapping con @ -->
+            <a class="btn-imprimir" th:href="@{/curriculum/imprimir}" target="_blank" rel="noopener noreferrer">
+                <i class="fa-solid fa-print" aria-hidden="true"></i>
+                <!-- Acceso a clave i18n -->
+                <span th:text="#{cv.imprimir}">Versión para imprimir</span>
+            </a>
+        </div>
+
+        <div class="cv-hoja">
+
+            <!-- Columna izquierda -->
+            <div class="columna-izq">
+
+                <section class="cv-perfil">
+                    <!-- Acceso a atributo del objeto miCurriculum -->
+                    <h1 class="cv-nombre" th:text="${miCurriculum.nombre}">Nombre</h1>
+                    <!-- Acceso a clave i18n -->
+                    <h2 class="cv-profesion" th:text="#{cv.titularProfesional}">Profesión</h2>
+                    <!-- Acceso a clave i18n -->
+                    <p class="cv-descripcion" th:text="#{cv.presentacion}">Presentación</p>
+                </section>
+
+                <!-- En el caso de que el campo esté vacío no se mostrará nada -->
+                <section class="cv-contacto" th:if="${!#strings.isEmpty(miCurriculum.contacto)}">
+                    <!-- Acceso a clave i18n -->
+                    <h3 class="cv-titulo-seccion" th:text="#{cv.contacto}">Contacto</h3>
+                    <!-- Acceso a atributo del objeto miCurriculum -->
+                    <p class="cv-contacto-dato" th:text="${miCurriculum.contacto}">example@gmail.com</p>
+                </section>
+
+                <section class="cv-habilidades">
+                    <!-- Acceso a clave i18n -->
+                    <h3 class="cv-titulo-seccion" th:text="#{cv.habilidades}">Habilidades</h3>
+                    <ul class="cv-lista-niveles">
+                        <!-- Bucle por el cual accederá a todas las habilidades y sys niveles -->
+                        <li class="cv-par" th:each="h : ${miCurriculum.habilidades}">
+                            <!-- Acceso a atributo de habilidades -->
+                            <span class="cv-nombre-nivel" th:text="#{${h.nombre}}">Habilidad</span>
+                            <!-- Switch que dependiendo del atributo mostrará un texto y mediante las classes css coloreará el recuadro de un color u otro -->
+                            <span th:switch="${h.nivel}">
+                                <!-- En el caso de ser alto, mostrará el texto de la clave i18n -->
+                                <span th:case="'alto'" class="cv-nivel nivel-alto" th:text="#{nivel.alto}">nivel alto</span>
+                                <!-- En el caso de ser alto, mostrará el texto de la clave i18n -->
+                                <span th:case="'medio'" class="cv-nivel nivel-medio" th:text="#{nivel.medio}">nivel medio</span>
+                                <!-- En el caso de ser alto, mostrará el texto de la clave i18n -->
+                                <span th:case="'bajo'" class="cv-nivel nivel-bajo" th:text="#{nivel.bajo}">nivel bajo</span>
+                            </span>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="cv-idioma">
+                    <!-- Acceso a clave i18n -->
+                    <h3 class="cv-titulo-seccion" th:text="#{cv.idiomas}">Idiomas</h3>
+                    <ul class="cv-lista-niveles">
+                        <!-- Acceso a atributo del objeto miCurriculum, en este caso es una Lista de objetos que recorrerá mediante un each,
+                        y mostrará a través de una case el nivel mediante una clave i18n y su color mediante las clases CSS-->
+                        <li class="cv-par" th:each="i : ${miCurriculum.idiomas}">
+                            <span class="cv-nombre-nivel" th:text="#{${i.nombre}}">Idioma</span>
+                            <!-- Switch que dependiendo del atributo mostrará un texto y mediante las classes css coloreará el recuadro de un color u otro -->
+                            <span th:switch="${i.nivel}">
+                                <!-- En el caso de ser alto, mostrará el texto de la clave i18n -->
+                                <span th:case="'alto'" class="cv-nivel nivel-alto" th:text="#{nivel.alto}">nivel alto</span>
+                                <!-- En el caso de ser alto, mostrará el texto de la clave i18n -->
+                                <span th:case="'medio'" class="cv-nivel nivel-medio" th:text="#{nivel.medio}">nivel medio</span>
+                                <!-- En el caso de ser alto, mostrará el texto de la clave i18n -->
+                                <span th:case="'bajo'" class="cv-nivel nivel-bajo" th:text="#{nivel.bajo}">nivel bajo</span>
+                            </span>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+
+            <!-- Columna derecha: líneas temporales -->
+            <div class="columna-dere">
+
+                <section class="cv-formacion">
+                    <!-- Acceso a clave i18n -->
+                    <h2 class="cv-titulo-seccion" th:text="#{cv.formacion}">Formación</h2>
+                    <ol class="timeline">
+                        <!-- Acceso a un atributo de la clase miCurriculum con línea temporal -->
+                        <li class="timeline-item" th:each="f : ${miCurriculum.formaciones}"
+                            th:classappend="${f.anioFinalizacion == null} ? 'timeline-actual'">
+                            <!-- En el caso que la formación no esté acabada,la clave i18n mostrará un texto -->
+                            <p class="timeline-fecha" th:if="${f.anioFinalizacion == null}" th:text="#{cv.encurso}">En curso</p>
+                            <!-- En el caso que la formación está acabada, se mostrará el año de finalización -->
+                            <p class="timeline-fecha" th:unless="${f.anioFinalizacion == null}" th:text="${f.anioFinalizacion}">2025</p>
+                            <!-- Acceso a clave i18n mediante un atributo del objeto formaciones -->
+                            <h3 th:text="#{${f.nombre}}">Desarrollo de Aplicaciones Web</h3>
+                            <!-- Acceso a clave i18n mediante un atributo del objeto formaciones -->
+                            <p class="cv-item-centro" th:text="#{${f.centro}}">IES Velazquez</p>
+                        </li>
+                    </ol>
+                </section>
+
+                <section class="cv-experiencia">
+                    <h2 class="cv-titulo-seccion" th:text="#{cv.experiencia}">Experiencia</h2>
+
+                    <p class="cv-sin-experiencia" th:if="${#lists.isEmpty(miCurriculum.experiencias)}"
+                       th:text="#{cv.sinexperiencia}">En busca de mi primera experiencia</p>
+
+                    <ol class="timeline" th:unless="${#lists.isEmpty(miCurriculum.experiencias)}">
+                        <!-- Acceso a atributo de la clase miCurriculum en el cual se hace un recorrido sobre el array de experiencias
+                        del objeto -->
+                        <li class="timeline-item" th:each="e : ${miCurriculum.experiencias}">
+                            <!-- Acceso a clave i18n mediante un atributo del objeto experiencia -->
+                            <p class="timeline-fecha" th:text="#{${e.periodo}}">04/05/2026 – 05/06/2026</p>
+                            <!-- Acceso a clave i18n mediante un atributo del objeto experiencia -->
+                            <h3 th:text="#{${e.puesto}}">Prácticas</h3>
+                            <!-- Acceso a clave i18n mediante un atributo del objeto experiencia -->
+                            <p class="cv-item-centro" th:text="#{${e.organizacion}}">Genteel Home S.L.</p>
+                        </li>
+                    </ol>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Header reemplazado con Thymeleaf -->
+    <footer th:replace="~{fragments/fragments :: footer}">Footer</footer>
+
+    </body>
+</html>

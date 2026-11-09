@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Acceso a clave i18n -->
+        <title th:text="#{vista.titulo}">Vista previa</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSh8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <!-- Acceso a un recurso estático mediante URL relativa con @ -->
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+
+    <!-- Header reemplazado con Thymeleaf pasando el parámetro 'editar' para indicar la página actual de origen -->
+    <header th:replace="~{fragments/fragments :: header('editar')}">Header</header>
+
+    <main class="formulario">
+        <!-- Acceso a clave i18n -->
+        <h2 class="formulario-titulo" th:text="#{vista.titulo}">Vista previa</h2>
+
+        <!-- Perfil: nombre, titular y presentación son obligatorios, siempre se muestran -->
+        <section class="form-section preview-perfil">
+            <!-- Acceso directo al atributo nombre del objeto portfolioForm -->
+            <h3 class="preview-nombre" th:text="${portfolioForm.nombre}">Nombre</h3>
+            <!-- Acceso directo al atributo titular del objeto portfolioForm -->
+            <p class="cv-profesion" th:text="${portfolioForm.titular}">Titular</p>
+            <!-- Acceso directo al atributo presentacion del objeto portfolioForm -->
+            <p th:text="${portfolioForm.presentacion}">Presentación</p>
+
+            <!-- Opcionales: solo se muestran si el campo ciudad no está vacío tras recortar espacios -->
+            <p class="preview-dato" th:if="${not #strings.isEmpty(#strings.trim(portfolioForm.ciudad))}">
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                <!-- Acceso al atributo ciudad del objeto portfolioForm -->
+                <span th:text="${portfolioForm.ciudad}">Ciudad</span>
+            </p>
+            <!-- Opcionales: solo se muestran si el campo correo no está vacío tras recortar espacios -->
+            <p class="preview-dato" th:if="${not #strings.isEmpty(#strings.trim(portfolioForm.correo))}">
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                <!-- Acceso al atributo correo del objeto portfolioForm -->
+                <span th:text="${portfolioForm.correo}">correo@ejemplo.com</span>
+            </p>
+        </section>
+
+        <!-- Proyectos -->
+        <section class="form-section">
+            <!-- Acceso a clave i18n -->
+            <h3 th:text="#{vista.proyectos}">Proyectos</h3>
+
+            <!-- Condicional que muestra un mensaje mediante i18n si la lista de proyectos está vacía -->
+            <p class="project-vacio" th:if="${#lists.isEmpty(proyectos)}"
+               th:text="#{vista.sinproyectos}">Todavía no hay proyectos en este portfolio</p>
+
+            <div class="project-grid">
+                <!-- Bucle para recorrer la lista de proyectos enviados y renderizar una tarjeta por cada elemento -->
+                <article class="project-card" th:each="p : ${proyectos}">
+                    <div class="project-body">
+                        <div class="project-header">
+                            <!-- Acceso al atributo titulo del proyecto actual -->
+                            <h3 class="project-title" th:text="${p.titulo}">Título</h3>
+
+                            <!-- Switch que evalúa el estado del proyecto para mostrar la etiqueta correspondiente mediante clave i18n -->
+                            <span th:switch="${p.estado}">
+                                    <!-- En el caso de estar "En curso", muestra la etiqueta verde con texto i18n -->
+                                    <span th:case="'En curso'" class="etiqueta-estado estado-en-curso"
+                                          th:text="#{estado.encurso}">En curso</span>
+                                <!-- En el caso de estar "Terminado", muestra la etiqueta gris con texto i18n -->
+                                    <span th:case="'Terminado'" class="etiqueta-estado estado-terminado"
+                                          th:text="#{estado.terminado}">Terminado</span>
+                                </span>
+                        </div>
+
+                        <p class="project-meta">
+                            <!-- Acceso a clave i18n compuesta concatenando el prefijo 'categoria.' con el valor de la categoría -->
+                            <span th:text="#{'categoria.' + ${p.categoria}}">Categoría</span>
+                            <span aria-hidden="true">·</span>
+                            <!-- Acceso al atributo anio del proyecto actual -->
+                            <span th:text="${p.anio}">2026</span>
+                        </p>
+
+                        <!-- Acceso al atributo descripcion del proyecto actual -->
+                        <p class="project-description" th:text="${p.descripcion}">Descripción</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Enlace con URL relativa mediante @ para volver a la página de edición -->
+        <a class="btn-secundario" th:href="@{/portfolio/editar}">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            <!-- Acceso a clave i18n -->
+            <span th:text="#{vista.volver}">Volver al editor</span>
+        </a>
+    </main>
+
+    <!-- Footer reemplazado con Thymeleaf -->
+    <footer th:replace="~{fragments/fragments :: footer}">Footer</footer>
+
+    </body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Acceso a clave i18n -->
+        <title th:text="#{error.titulo}">Error</title>
+        <!-- Acceso a un recurso estático mediante URL relativa con @ -->
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+
+    <!-- Header reemplazado con Thymeleaf -->
+    <header th:replace="~{fragments/fragments :: header('error')}">Header</header>
+
+    <!-- Contenedor main donde está el contenido que se mostrará posteriormente -->
+    <main class="error-pagina">
+        <p class="error-codigo" th:text="${status}">404</p>
+        <!-- Acceso a clave i18n -->
+        <h2 th:text="#{error.titulo}">Vaya, algo ha salido mal</h2>
+
+        <!-- Switch que evalúa el código de estado para mostrar un mensaje personalizado -->
+        <p th:switch="${status}">
+            <!-- En el caso de ser un error 404, mostrará el mensaje correspondiente mediante clave i18n -->
+            <span th:case="404" th:text="#{error.404}">La página o el proyecto que buscas no existe.</span>
+            <!-- En el caso de cualquier otro código de error (*), mostrará un mensaje genérico mediante clave i18n -->
+            <span th:case="*" th:text="#{error.generico}">Ha ocurrido un error inesperado.</span>
+        </p>
+
+        <!-- Acceso a un GetMapping con @ para volver a la página principal del currículum -->
+        <a class="btn-filtrar" th:href="@{/curriculum}" th:text="#{error.volver}">Volver al inicio</a>
+    </main>
+
+    <!-- Footer reemplazado con Thymeleaf -->
+    <footer th:replace="~{fragments/fragments :: footer}">Footer</footer>
+
+    </body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Acceso a clave i18n -->
+        <title th:text="#{portfolio.titulo}">Curriculum</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSh8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <!-- Acceso a un recurso estático mediante URL relativa con @ -->
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+
+    <!-- Header reemplazado con Thymeleaf pasando el parámetro 'editar' para indicar la página actual -->
+    <header th:replace="~{fragments/fragments :: header('editar')}">Header</header>
+
+    <main class="formulario">
+        <!-- Acceso a clave i18n -->
+        <h2 class="formulario-titulo" th:text="#{editar.titulo}">Crea tu propio portfolio</h2>
+
+        <!-- Formulario conectado a la acción POST mediante @ y vinculado al objeto portfolioForm con Spring Data binding -->
+        <form th:action="@{/portfolio/editar}" th:object="${portfolioForm}" method="post" novalidate>
+
+            <!-- Botón por defecto oculto: permite que al pulsar Enter se active esta acción en lugar de eliminar la primera fila por error -->
+            <button type="submit" name="accion" value="vista" class="sr-only" tabindex="-1" aria-hidden="true"></button>
+
+            <!-- Condicional que muestra un aviso general si existe cualquier error de validación en los campos -->
+            <p class="project-error" th:if="${#fields.hasErrors('*')}" th:text="#{editar.revisa}">Revisa los campos indicados</p>
+
+            <!-- Bucle que muestra los errores globales del formulario (como el límite de proyectos alcanzado) -->
+            <p class="project-error" th:each="e : ${#fields.globalErrors()}" th:text="${e}">Error global</p>
+
+            <!-- ===== Datos personales ===== -->
+            <section class="form-section">
+                <!-- Acceso a clave i18n -->
+                <h3 th:text="#{editar.datos}">Datos personales</h3>
+
+                <label class="form-field">
+                    <!-- Acceso a clave i18n -->
+                    <span th:text="#{editar.nombre}">Nombre completo *</span>
+                    <!-- Campo de texto vinculado a la propiedad nombre del objeto portfolioForm -->
+                    <input type="text" th:field="*{nombre}">
+                    <!-- Mensaje de error específico para el campo nombre si falla la validación -->
+                    <small class="field-error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">Error</small>
+                </label>
+
+                <label class="form-field">
+                    <!-- Acceso a clave i18n -->
+                    <span th:text="#{editar.titular}">Titular profesional *</span>
+                    <!-- Campo de texto vinculado a la propiedad titular -->
+                    <input type="text" th:field="*{titular}">
+                    <!-- Mensaje de error específico para el campo titular -->
+                    <small class="field-error" th:if="${#fields.hasErrors('titular')}" th:errors="*{titular}">Error</small>
+                </label>
+
+                <label class="form-field">
+                    <!-- Acceso a clave i18n -->
+                    <span th:text="#{editar.presentacion}">Presentación *</span>
+                    <!-- Textarea vinculado a la propiedad presentacion -->
+                    <textarea rows="4" th:field="*{presentacion}"></textarea>
+                    <!-- Mensaje de error específico para el campo presentación -->
+                    <small class="field-error" th:if="${#fields.hasErrors('presentacion')}" th:errors="*{presentacion}">Error</small>
+                </label>
+
+                <label class="form-field">
+                    <!-- Acceso a clave i18n -->
+                    <span th:text="#{editar.ciudad}">Ciudad</span>
+                    <!-- Campo de texto vinculado a la propiedad ciudad -->
+                    <input type="text" th:field="*{ciudad}">
+                </label>
+
+                <label class="form-field">
+                    <!-- Acceso a clave i18n -->
+                    <span th:text="#{editar.correo}">Correo electrónico</span>
+                    <!-- Campo de texto optimizado para email vinculado a la propiedad correo -->
+                    <input type="text" inputmode="email" th:field="*{correo}">
+                    <!-- Mensaje de error específico para el campo correo -->
+                    <small class="field-error" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}">Error</small>
+                </label>
+            </section>
+
+            <!-- ===== Proyectos ===== -->
+            <section class="form-section">
+                <!-- Acceso a clave i18n -->
+                <h3 th:text="#{editar.proyectos}">Proyectos</h3>
+                <!-- Mensaje resumen i18n que recibe dos parámetros: el número actual de proyectos y el máximo permitido -->
+                <p class="project-resumen"
+                   th:text="#{editar.filas(${#lists.size(portfolioForm.proyectos)}, ${maxProyectos})}">1 de 5 proyectos</p>
+
+                <!-- Condicional: muestra el botón de añadir proyecto si la cantidad actual es menor al límite máximo -->
+                <div class="editor-anadir" th:if="${#lists.size(portfolioForm.proyectos) < maxProyectos}">
+                    <!-- Botón submit que envía la acción 'anadir' para agregar un nuevo elemento a la lista -->
+                    <button type="submit" name="accion" value="anadir" class="btn-secundario">
+                        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                        <!-- Acceso a clave i18n -->
+                        <span th:text="#{editar.anadir}">Añadir proyecto</span>
+                    </button>
+                </div>
+                <!-- Mensaje condicional (si se alcanza el límite) que avisa al usuario -->
+                <p class="editor-limite" th:unless="${#lists.size(portfolioForm.proyectos) < maxProyectos}"
+                   th:text="#{editar.limite}">Has alcanzado el límite de proyectos</p>
+
+                <!-- Bucle iterativo que recorre la lista de proyectos (stat proporciona el índice y el contador) -->
+                <div class="proyecto-fila" th:each="p, stat : *{proyectos}">
+
+                    <div class="proyecto-fila-cabecera">
+                        <!-- Acceso a clave i18n dinámica pasando el número de proyecto (${stat.count}) -->
+                        <h4 th:text="#{editar.proyecto(${stat.count})}">Proyecto 1</h4>
+
+                        <!-- Botón de papelera para eliminar el proyecto, enviando su índice exacto como valor -->
+                        <button type="submit" name="quitar" th:value="${stat.index}" class="btn-papelera"
+                                th:title="#{editar.quitar}" th:aria-label="#{editar.quitar}">
+                            <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <label class="form-field">
+                        <!-- Acceso a clave i18n -->
+                        <span th:text="#{editar.p.titulo}">Título *</span>
+                        <!-- Campo vinculado dinámicamente al título del proyecto en la posición actual del índice -->
+                        <input type="text" th:field="*{proyectos[__${stat.index}__].titulo}">
+                        <!-- Validación de errores específica para el título de este proyecto en concreto -->
+                        <small class="field-error" th:if="${#fields.hasErrors('proyectos[__${stat.index}__].titulo')}"
+                               th:errors="*{proyectos[__${stat.index}__].titulo}">Error</small>
+                    </label>
+
+                    <label class="form-field">
+                        <!-- Acceso a clave i18n -->
+                        <span th:text="#{editar.p.anio}">Año *</span>
+                        <!-- Campo numérico vinculado al año del proyecto en la posición actual -->
+                        <input type="text" inputmode="numeric" th:field="*{proyectos[__${stat.index}__].anio}">
+                        <!-- Validación de errores para el año de este proyecto -->
+                        <small class="field-error" th:if="${#fields.hasErrors('proyectos[__${stat.index}__].anio')}"
+                               th:errors="*{proyectos[__${stat.index}__].anio}">Error</small>
+                    </label>
+
+                    <label class="form-field">
+                        <!-- Acceso a clave i18n -->
+                        <span th:text="#{editar.p.categoria}">Categoría *</span>
+                        <!-- Selector (select) vinculado a la categoría del proyecto actual con opciones traducidas por i18n -->
+                        <select th:field="*{proyectos[__${stat.index}__].categoria}">
+                            <option value="" th:text="#{editar.seleccionar}">Selecciona…</option>
+                            <option value="aplicaciones" th:text="#{categoria.aplicaciones}">Aplicaciones</option>
+                            <option value="sitios-web" th:text="#{categoria.sitios-web}">Sitios web</option>
+                            <option value="diseno" th:text="#{categoria.diseno}">Diseño</option>
+                        </select>
+                        <!-- Validación de errores para la categoría -->
+                        <small class="field-error" th:if="${#fields.hasErrors('proyectos[__${stat.index}__].categoria')}"
+                               th:errors="*{proyectos[__${stat.index}__].categoria}">Error</small>
+                    </label>
+
+                    <label class="form-field">
+                        <!-- Acceso a clave i18n -->
+                        <span th:text="#{editar.p.estado}">Estado *</span>
+                        <!-- Selector vinculado al estado del proyecto con opciones traducidas por i18n -->
+                        <select th:field="*{proyectos[__${stat.index}__].estado}">
+                            <option value="" th:text="#{editar.seleccionar}">Selecciona…</option>
+                            <option value="En curso" th:text="#{estado.encurso}">En curso</option>
+                            <option value="Terminado" th:text="#{estado.terminado}">Terminado</option>
+                        </select>
+                        <!-- Validación de errores para el estado -->
+                        <small class="field-error" th:if="${#fields.hasErrors('proyectos[__${stat.index}__].estado')}"
+                               th:errors="*{proyectos[__${stat.index}__].estado}">Error</small>
+                    </label>
+
+                    <label class="form-field">
+                        <!-- Acceso a clave i18n -->
+                        <span th:text="#{editar.p.descripcion}">Descripción *</span>
+                        <!-- Textarea vinculado a la descripción del proyecto actual -->
+                        <textarea rows="3" th:field="*{proyectos[__${stat.index}__].descripcion}"></textarea>
+                        <!-- Validación de errores para la descripción -->
+                        <small class="field-error" th:if="${#fields.hasErrors('proyectos[__${stat.index}__].descripcion')}"
+                               th:errors="*{proyectos[__${stat.index}__].descripcion}">Error</small>
+                    </label>
+                </div>
+            </section>
+
+            <!-- ===== Enviar: a la derecha, al final ===== -->
+            <div class="editor-acciones">
+                <!-- Botón submit con la acción 'vista' para generar la vista previa del portfolio -->
+                <button type="submit" name="accion" value="vista" class="btn-filtrar"
+                        th:text="#{editar.vista}">Generar vista previa</button>
+            </div>
+        </form>
+    </main>
+
+    <!-- Footer reemplazado con Thymeleaf -->
+    <footer th:replace="~{fragments/fragments :: footer}">Footer</footer>
+
+    </body>
+</html>

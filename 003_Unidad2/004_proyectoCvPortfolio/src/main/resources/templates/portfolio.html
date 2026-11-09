@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Acceso a clave i18n -->
+        <title th:text="#{portfolio.titulo}">Curriculum</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSh8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <!-- Acceso a un recurso estático mediante URL relativa con @ -->
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+
+    <!-- Header reemplazado con Thymeleaf pasando el parámetro 'portfolio' para indicar la página actual -->
+    <header th:replace="~{fragments/fragments :: header('portfolio')}">Header</header>
+
+    <!-- Main con los proyectos extraido de fragments-->
+    <main class="portfolio">
+        <section class="project-container">
+            <!-- Acceso a clave i18n -->
+            <h2 class="project-title" th:text="#{portfolio.lista}">Listado de proyectos</h2>
+
+            <div class="portfolio-layout">
+
+                <!-- Columna izquierda: panel de filtros -->
+                <aside class="portfolio-lateral">
+                    <!-- Formulario de tipo GET conectado a la ruta /portfolio -->
+                    <form class="project-filter" th:action="@{/portfolio}" method="get">
+                        <div class="filter-field">
+                            <!-- Acceso a clave i18n -->
+                            <label for="categoria" th:text="#{filtro.categoria}">Categoría</label>
+                            <select id="categoria" name="categoria">
+                                <!-- value = código interno que compara el servidor; el texto visible sale del diccionario -->
+                                <!-- Comprueba mediante th:selected si esta opción coincide con la seleccionada y muestra texto i18n -->
+                                <option value="todas" th:selected="${categoriaSel == 'todas'}" th:text="#{categoria.todas}">Todas</option>
+                                <option value="aplicaciones" th:selected="${categoriaSel == 'aplicaciones'}" th:text="#{categoria.aplicaciones}">Aplicaciones</option>
+                                <option value="sitios-web" th:selected="${categoriaSel == 'sitios-web'}" th:text="#{categoria.sitios-web}">Sitios web</option>
+                                <option value="diseno" th:selected="${categoriaSel == 'diseno'}" th:text="#{categoria.diseno}">Diseño</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-field">
+                            <!-- Acceso a clave i18n -->
+                            <label for="anio" th:text="#{filtro.anio}">Año</label>
+                            <!-- Campo numérico con restricciones de rango, asignando el valor seleccionado previamente -->
+                            <input id="anio" type="number" name="anio" min="1900" max="2100" th:value="${anioSel}">
+                        </div>
+
+                        <!-- Botón submit para aplicar los filtros -->
+                        <button type="submit" class="btn-filtrar" th:text="#{filtro.filtrar}">Filtrar</button>
+                        <!-- Enlace con URL relativa para resetear los filtros y mostrar todos -->
+                        <a class="btn-mostrar-todos" th:href="@{/portfolio}" th:text="#{filtro.mostrartodos}">Mostrar todos</a>
+
+                        <!-- Aviso de año no válido: el filtro por año no se ha aplicado -->
+                        <p class="project-error" th:if="${anioInvalido}" th:text="#{filtro.anioinvalido}">Introduce un año válido</p>
+
+                        <!-- Contador de resultados o mensaje si hay coincidencias (pasando la variable total como parámetro) -->
+                        <p class="project-resumen" th:if="${total > 0}" th:text="#{filtro.resultados(${total})}">3 proyectos</p>
+                        <!-- Mensaje condicional si no se encuentran proyectos -->
+                        <p class="project-vacio" th:if="${total == 0}" th:text="#{filtro.vacio}">No se encontraron proyectos</p>
+                    </form>
+                </aside>
+
+                <!-- Columna derecha: mensajes y tarjetas -->
+                <div class="portfolio-resultados">
+                    <!-- Aviso duplicado para la columna derecha en caso de año no válido -->
+                    <p class="project-error" th:if="${anioInvalido}" th:text="#{filtro.anioinvalido}">Introduce un año válido</p>
+                    <!-- Resumen y estado vacío repetidos para diseño responsivo/visual en la columna de resultados -->
+                    <p class="project-resumen" th:if="${total > 0}" th:text="#{filtro.resultados(${total})}">3 proyectos</p>
+                    <p class="project-vacio" th:if="${total == 0}" th:text="#{filtro.vacio}">No se encontraron proyectos</p>
+
+                    <div class="project-grid">
+                        <!-- Bloque iterativo para recorrer la lista de proyectos y renderizar su tarjeta mediante un fragmento reutilizable -->
+                        <th:block th:each="proyectos : ${proyectos}">
+                            <div th:replace="~{fragments/fragments :: tarjetaProyecto(${proyectos})}">
+                                Tarjetas de proyectos
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer reemplazado con Thymeleaf -->
+    <footer th:replace="~{fragments/fragments :: footer}">Footer</footer>
+
+    </body>
+</html>
