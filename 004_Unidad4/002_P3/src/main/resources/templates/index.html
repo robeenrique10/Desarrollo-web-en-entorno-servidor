@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#17201c">
+    <title>Actividades del centro — U4P3</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="site-shell">
+    <header class="topbar">
+        <a class="brand" th:href="@{/}" aria-label="Inicio de actividades">
+            <span class="brand-mark" aria-hidden="true">CC</span>
+            <span>ACTIVIDADES CULTURALES<span class="brand-sub">PRÁCTICA U4P3</span></span>
+        </a>
+        <div class="connection-status">
+            <span class="status-light" aria-hidden="true"></span>
+            <span>SPRING MVC + MARIA DB</span>
+        </div>
+    </header>
+
+    <main>
+        <section class="intro">
+            <div class="intro-copy">
+                <p class="kicker"><span>01</span> · TABLÓN DE ACTIVIDADES</p>
+                <h1>Actividades del centro<br><em>al día.</em></h1>
+                <p class="intro-text">
+                    Aquí se muestran las actividades registradas, los filtros de próximas con
+                    inscripción abierta y gratuitas, y el formulario para dar de alta nuevas.
+                </p>
+                <a class="jump-link" href="#nueva-actividad">
+                    <span aria-hidden="true">↓</span> Ir al formulario de alta
+                </a>
+            </div>
+            <div class="intro-art" aria-hidden="true">
+                <div class="art-sun"></div>
+                <div class="art-disc disc-one"></div>
+                <div class="art-disc disc-two"></div>
+                <div class="art-disc disc-three"></div>
+                <div class="art-label">TALLERES<br>Y CHARLAS</div>
+                <div class="art-caption">CENTRO<br>CULTURAL</div>
+                <div class="art-grid"></div>
+            </div>
+        </section>
+
+        <section class="inventory-section" aria-labelledby="activities-title">
+            <div class="section-heading">
+                <div>
+                    <p class="kicker">LISTADO ACTUAL</p>
+                    <h2 id="activities-title">Actividades <span class="heading-slash">/</span> <span
+                            th:text="${#lists.size(actividades)}">0</span></h2>
+                </div>
+                <span class="heading-stamp">CONSULTAS<br>JPQL</span>
+            </div>
+
+            <nav class="filter-bar" aria-label="Filtros de consulta">
+                <a class="filter-pill" th:href="@{/}">Ver todas</a>
+                <a class="filter-pill" th:href="@{/proximas-abiertas}">Próximas con inscripción abierta</a>
+                <a class="filter-pill" th:href="@{/gratuitas}">Solo gratuitas</a>
+            </nav>
+
+            <div class="notice success" role="status" th:if="${mensajeExito}" th:text="${mensajeExito}">
+                Actividad guardada correctamente.
+            </div>
+
+            <div class="empty-state" th:if="${#lists.isEmpty(actividades)}">
+                <span class="empty-icon" aria-hidden="true">!</span>
+                <div>
+                    <h3>No hay resultados que mostrar.</h3>
+                    <p>Con este filtro no aparece ninguna actividad ahora mismo. Puedes volver a todas o añadir una nueva.</p>
+                </div>
+            </div>
+
+            <div class="game-grid" th:unless="${#lists.isEmpty(actividades)}">
+                <article class="game-card" th:each="actividad, iteracion : ${actividades}">
+                    <div class="game-art" th:classappend="${'art-variant-' + (iteracion.index % 5)}">
+                        <span class="art-index" th:text="${#numbers.formatInteger(iteracion.index + 1, 2)}">01</span>
+                        <span class="art-console"
+                              th:text="${actividad.fecha != null ? #temporals.format(actividad.fecha, 'dd/MM/yyyy') : 'Sin fecha'}">Fecha</span>
+                        <span class="art-initial"
+                              th:text="${!#strings.isEmpty(actividad.titulo) ? #strings.toUpperCase(#strings.substring(actividad.titulo, 0, 1)) : 'A'}">A</span>
+                        <span class="art-bottom"
+                              th:text="${actividad.duracionMinutos != null ? actividad.duracionMinutos + ' min' : 'Duración'}">Duración</span>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title-line">
+                            <h3 th:text="${actividad.titulo}">Título</h3>
+                            <span class="game-price"
+                                  th:text="${actividad.precio != null && actividad.precio.compareTo(T(java.math.BigDecimal).ZERO) == 0 ? 'Gratis' : (actividad.precio != null ? #numbers.formatDecimal(actividad.precio, 1, 'COMMA', 2, 'POINT') + ' €' : '—')}">0,00 €</span>
+                        </div>
+                        <p class="activity-desc" th:if="${!#strings.isEmpty(actividad.descripcion)}"
+                           th:text="${actividad.descripcion}">Descripción</p>
+                        <div class="game-meta">
+                            <span>Aforo: <strong th:text="${actividad.aforo}">0</strong></span>
+                            <span aria-hidden="true">·</span>
+                            <span th:text="${actividad.fecha != null ? #temporals.format(actividad.fecha, 'dd/MM/yyyy') : ''}">Fecha</span>
+                        </div>
+                        <div class="stock-line">
+                            <span class="stock-label">DURACIÓN: <strong class="stock-value"
+                                                                        th:text="${actividad.duracionMinutos != null ? actividad.duracionMinutos + ' min' : '-'}">-</strong></span>
+                            <span class="stock-state"
+                                  th:classappend="${!actividad.inscripcionAbierta ? ' sold-out' : ''}"
+                                  th:text="${actividad.inscripcionAbierta ? 'Inscripción abierta' : 'Inscripción cerrada'}">Estado</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="form-section" id="nueva-actividad" aria-labelledby="form-title">
+            <div class="form-aside">
+                <p class="kicker">ALTA / 02</p>
+                <h2>Añadir nueva<br>actividad</h2>
+                <p>Rellena los campos para guardar la actividad en la base de datos mediante el formulario.</p>
+                <div class="form-aside-note">
+                    <span class="note-symbol" aria-hidden="true">+</span>
+                    <span>Patrón PRG: si todo está bien redirige a <code>/</code>.</span>
+                </div>
+            </div>
+
+            <div class="form-panel">
+                <div class="form-panel-head">
+                    <div>
+                        <p class="kicker">FORMULARIO</p>
+                        <h2 id="form-title">Nueva actividad</h2>
+                    </div>
+                    <span class="form-code">POST /actividades</span>
+                </div>
+
+                <form th:action="@{/actividades}" th:object="${nuevaActividad}" method="post">
+                    <div class="notice error-summary" role="alert" th:if="${#fields.hasErrors('*')}">
+                        <strong>Revisa estos errores antes de enviar:</strong>
+                        <ul>
+                            <li th:each="error : ${#fields.errors('*')}" th:text="${error}">Error</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="field field-wide">
+                            <label for="titulo">Título <span>*</span></label>
+                            <input id="titulo" type="text" th:field="*{titulo}"
+                                   maxlength="120" placeholder="Ej. Club de lectura"
+                                   th:errorclass="invalid">
+                            <p class="field-error" th:errors="*{titulo}"></p>
+                        </div>
+
+                        <div class="field field-wide">
+                            <label for="descripcion">Descripción</label>
+                            <textarea id="descripcion" rows="3" th:field="*{descripcion}"
+                                      placeholder="De qué trata la actividad..."
+                                      th:errorclass="invalid"></textarea>
+                            <p class="field-error" th:errors="*{descripcion}"></p>
+                        </div>
+
+                        <div class="field">
+                            <label for="fecha">Fecha <span>*</span></label>
+                            <input id="fecha" type="date" th:field="*{fecha}"
+                                   th:errorclass="invalid">
+                            <p class="field-error" th:errors="*{fecha}"></p>
+                        </div>
+
+                        <div class="field">
+                            <label for="duracionMinutos">Duración (minutos) <span>*</span></label>
+                            <input id="duracionMinutos" type="number" th:field="*{duracionMinutos}"
+                                   min="1" max="1440" step="1" placeholder="60"
+                                   th:errorclass="invalid">
+                            <p class="field-error" th:errors="*{duracionMinutos}"></p>
+                        </div>
+
+                        <div class="field">
+                            <label for="precio">Precio <span>*</span></label>
+                            <div class="input-with-suffix">
+                                <input id="precio" type="number" th:field="*{precio}"
+                                       min="0" max="999999.99" step="0.01" placeholder="0.00"
+                                       th:errorclass="invalid">
+                                <span>EUR</span>
+                            </div>
+                            <p class="field-error" th:errors="*{precio}"></p>
+                        </div>
+
+                        <div class="field">
+                            <label for="aforo">Aforo <span>*</span></label>
+                            <input id="aforo" type="number" th:field="*{aforo}"
+                                   min="1" max="10000" step="1" placeholder="25"
+                                   th:errorclass="invalid">
+                            <p class="field-error" th:errors="*{aforo}"></p>
+                        </div>
+
+                        <div class="field field-wide">
+                            <label class="checkbox-field" for="inscripcionAbierta">
+                                <input id="inscripcionAbierta" type="checkbox" th:field="*{inscripcionAbierta}">
+                                <span>Inscripción abierta</span>
+                            </label>
+                            <p class="field-error" th:errors="*{inscripcionAbierta}"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <p><span>*</span> Campos obligatorios. Pon <code>0</code> o <code>0.00</code> si es gratuita.</p>
+                        <button class="submit-button" type="submit">
+                            <span>Guardar actividad</span>
+                            <span aria-hidden="true">→</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <span>U4P3 · ACTIVIDADES CULTURALES</span>
+        <span>THYMELEAF + SPRING BOOT</span>
+    </footer>
+</div>
+</body>
+</html>
