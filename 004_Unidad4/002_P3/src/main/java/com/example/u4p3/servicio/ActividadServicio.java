@@ -16,24 +16,50 @@ public class ActividadServicio {
 
     private final ActividadRepository actividadRepository;
 
+    /**
+     * Constructor del servicio
+     */
     public ActividadServicio(ActividadRepository actividadRepository) {
         this.actividadRepository = actividadRepository;
     }
 
+    /**
+     * Recupera todas las actividades ordenadas alfabéticamente
+     * @return
+     */
     public List<Actividad> obtenerTodos() {
         return actividadRepository.findActividadesPorTitulo();
     }
 
+    /**
+     * Recupera todas las actividades con inscripción abierta
+     * @return
+     */
     public List<Actividad> obtenerPorInscripcionAbierta() {
         return actividadRepository.findActividadProximaConInscripcionAbierta(LocalDate.now());
     }
 
+    /**
+     * Recupera todas las actividades gratuitas
+     * @return
+     */
     public List<Actividad> obtenerPorGratuitas() {
         return actividadRepository.findActividadGratuitasOrdenadasPorFecha(BigDecimal.ZERO);
     }
 
+    /**
+     * Construye y guarda el objeto actividad con los datos que el controlador ya ha validado.
+     * @param titulo
+     * @param descripcion
+     * @param fecha
+     * @param duracionMinutos
+     * @param precio
+     * @param aforo
+     * @param inscripciónAbierta
+     * @return entidad persistida, con el id generado automáticamente
+     */
     @Transactional
-    public Actividad registrar(
+    public Actividad registrarActividad(
             String titulo,
             String descripcion,
             LocalDate fecha,
@@ -49,7 +75,8 @@ public class ActividadServicio {
         actividad.setPrecio(precio);
         actividad.setAforo(aforo);
         actividad.setInscripcionAbierta(inscripciónAbierta);
-        
+
+        // Guarda el objeto automáticamente
         return actividadRepository.save(actividad);
     }
 
